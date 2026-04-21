@@ -7,4 +7,8 @@ class Load extends Phaser.Scene {
         this.load.path = './assets/'
         
     }
+
+    create() {
+        this.scene.start("aisleOneScene")
+    }
 }
