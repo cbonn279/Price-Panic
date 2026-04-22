@@ -12,7 +12,7 @@ const config = {
             debug: false
         }
     },
-    scene: [ Load, AisleOne, AisleTwo, AisleThree ]
+    scene: [ Load, AisleOne, AisleTwo, AisleThree, AisleFour, AisleFive, Checkout, Shelf ]
 }
 
 const game = new Phaser.Game(config)

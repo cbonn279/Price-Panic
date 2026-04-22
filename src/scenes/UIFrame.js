@@ -1,35 +1,53 @@
 class UIFrame extends Phaser.Scene {
     constructor(sceneKey, aisleIndex) {
         super(sceneKey)
+
+        // defining room are we in
         this.aisleIndex = aisleIndex
     }
 
     create() {
         const { width, height } = this.scale
-        this.currentAisle = this.aisleIndex
-        this.aisleColors = [0xd9d4c6, 0xcfe3d1, 0xd7d2ea]
-        this.aisleScenes = ["aisleOneScene", "aisleTwoScene", "aisleThreeScene"]
 
-        this.background = this.add.rectangle(width / 2, height / 2, width, height, this.aisleColors[this.currentAisle])
-        this.add.rectangle(width / 2, height / 2, width - 48, height - 40, 0xf0ead9, 0.18)
-            .setStrokeStyle(4, 0x3d3d3d, 0.45)
+        // keep track of global scene
+        GameManager.currentAisle = this.aisleIndex
 
-        this.cameras.main.setBackgroundColor(this.aisleColors[this.currentAisle])
+        // temporary room colors, just rainbow for now (we can add assets later)
+        this.aisleColors = [0xff0000, 0xff7f00, 0xFFCE1B, 0x00ff00, 0x0000ff, 0x8b00ff];
 
+        // temporary labelling of rooms
+        this.add.text(width / 2, height / 3.5, `ROOM ${this.aisleIndex + 1}`, {fontSize: "48px",color: "#ffffff"}).setOrigin(0.5);
+
+        // UI Placement (ty Noah)
+        this.cameras.main.setBackgroundColor(this.aisleColors[this.aisleIndex]);
         this.createStickyNote(115, 35, 190, 150, "Buy", 0xffef8a)
         this.createStickyNote(width - 305, 35, 190, 150, "Budget", 0xaee6ff)
         this.createTimer(width / 2, 72, 62, 0.72)
         this.createDisplayPlaceholder(width / 2, height / 2 + 7)
         this.createAisleArrows(width, height)
         this.createCartPlaceholder(width / 2, height - 85)
+
+        // enter Shelf  when clicking center of room
+        this.input.on("pointerdown", (pointer) => {
+            const centerX = this.scale.width / 2;
+            const centerY = this.scale.height / 2;
+
+            // determine center of room
+            if (Math.abs(pointer.x - centerX) < 200 && Math.abs(pointer.y - centerY) < 120) {
+                this.scene.start("shelf", {aisle: GameManager.currentAisle});
+            }
+        });
     }
 
+    // use GameManager to reference aisle switching for arrows
     changeAisle(direction) {
-        const nextAisle = Phaser.Math.Wrap(this.currentAisle + direction, 0, this.aisleScenes.length)
+        GameManager.currentAisle = Phaser.Math.Wrap(GameManager.currentAisle + direction, 0,GameManager.aisleScenes.length);
 
-        this.scene.start(this.aisleScenes[nextAisle])
+        // switch scene
+        this.scene.start(GameManager.aisleScenes[GameManager.currentAisle]);
     }
 
+    // create UI (tyty Noah)
     createStickyNote(x, y, noteWidth, noteHeight, title, color) {
         const note = this.add.graphics()
 
@@ -140,6 +158,7 @@ class UIFrame extends Phaser.Scene {
     }
 }
 
+// aisle/checkout scenes defined for rooms
 class AisleOne extends UIFrame {
     constructor() {
         super("aisleOneScene", 0)
@@ -155,5 +174,23 @@ class AisleTwo extends UIFrame {
 class AisleThree extends UIFrame {
     constructor() {
         super("aisleThreeScene", 2)
+    }
+}
+
+class AisleFour extends UIFrame {
+    constructor() {
+        super("aisleFourScene", 3)
+    }
+}
+
+class AisleFive extends UIFrame {
+    constructor() {
+        super("aisleFiveScene", 4)
+    }
+}
+
+class Checkout extends UIFrame {
+    constructor() {
+        super("checkoutScene", 5)
     }
 }
