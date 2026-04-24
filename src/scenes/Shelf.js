@@ -11,7 +11,7 @@ class Shelf extends Phaser.Scene {
     }
 
     // fart framework
-    makeTextbox(x, y, text, funcClick, funcHover, funcOut) {
+    makeTextbox(x, y, text, funcClick, funcHover = (button) => {}, funcOut = (button) => {}) {
 		let button = this.add.text(x, y, text, this.textConfig)
 			.setStyle({ backgroundColor: '#111' })
 			.setInteractive({ useHandCursor: true })
@@ -46,8 +46,8 @@ class Shelf extends Phaser.Scene {
         if (this.grabButton) this.grabButton.destroy()
         if (this.checkPriceButton) this.checkPriceButton.destroy()
 
-        this.grabButton = this.makeTextbox(button.x - 80, button.y + 80, "Grab", this.onItemGrabbed.bind(this), (button) => {}, (button) => {})
-        this.checkPriceButton = this.makeTextbox(button.x + 80, button.y + 80, "Check Price", this.onCheckPrice.bind(this), (button) => {}, (button) => {})
+        this.grabButton = this.makeTextbox(button.x - 80, button.y + 80, "Grab", this.onItemGrabbed.bind(this))
+        this.checkPriceButton = this.makeTextbox(button.x + 80, button.y + 80, "Check Price", this.onCheckPrice.bind(this))
 
         // destroy if clicked poo button
         if (this.priceText != null) this.priceText.destroy();
