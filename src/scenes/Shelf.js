@@ -11,7 +11,7 @@ class Shelf extends Phaser.Scene {
     }
 
     // fart framework
-    makeTextbox(x, y, text, funcClick, funcHover, funcOut) {
+    makeTextbox(x, y, text, funcClick, funcHover = (button) => {}, funcOut = (button) => {}) {
 		let button = this.add.text(x, y, text, this.textConfig)
 			.setStyle({ backgroundColor: '#111' })
 			.setInteractive({ useHandCursor: true })
