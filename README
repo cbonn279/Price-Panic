@@ -1,0 +1,6 @@
+// NOTES
+//  GameManager.js = all game states and data
+//  UIFrame.js = UI, UI modes
+//  Aisles.js = rooms, navigation
+//  Shelf.js = item display and selection
+//  Items.js = item definitions 
