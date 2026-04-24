@@ -46,8 +46,8 @@ class Shelf extends Phaser.Scene {
         if (this.grabButton) this.grabButton.destroy()
         if (this.checkPriceButton) this.checkPriceButton.destroy()
 
-        this.grabButton = this.makeTextbox(button.x - 80, button.y + 80, "Grab", this.onItemGrabbed.bind(this))
-        this.checkPriceButton = this.makeTextbox(button.x + 80, button.y + 80, "Check Price", this.onCheckPrice.bind(this))
+        this.grabButton = this.makeTextbox(button.x - 80, button.y + 80, "Grab", this.onItemGrabbed.bind(this), (button) => {}, (button) => {})
+        this.checkPriceButton = this.makeTextbox(button.x + 80, button.y + 80, "Check Price", this.onCheckPrice.bind(this), (button) => {}, (button) => {})
 
         // destroy if clicked poo button
         if (this.priceText != null) this.priceText.destroy();
