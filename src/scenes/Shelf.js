@@ -36,7 +36,9 @@ class Shelf extends Phaser.Scene {
 
             // temporary box/text instead of items
             this.add.rectangle(x, y, 150, 150, 0xffffff).setStrokeStyle(3, 0x000000);
-            this.add.text(x, y, item.name, {color: "#000"}).setOrigin(0.5);});
+            this.add.text(x, y, item.name, {color: "#000"}).setOrigin(0.5);
+        });
+
         
         // back to rooms button
         this.createBackButton();
