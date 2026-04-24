@@ -18,10 +18,14 @@ class UIFrame extends Phaser.Scene {
 
         this.createStickyNote(115, 35, 190, 150, "Buy", 0xffef8a)
         this.createStickyNote(width - 305, 35, 190, 150, "Budget", 0xaee6ff)
-        this.createTimer(width / 2, 72, 62, 0.72)
+        this.createTimer(width / 2, 72, 62)
         this.createDisplayPlaceholder(width / 2, height / 2 + 7)
         this.createAisleArrows(width, height)
         this.createCartPlaceholder(width / 2, height - 85)
+    }
+
+    update() {
+        this.updateTimer()
     }
 
     changeAisle(direction) {
@@ -47,25 +51,55 @@ class UIFrame extends Phaser.Scene {
         })
     }
 
-    createTimer(x, y, radius, remainingPercent) {
-        const timer = this.add.graphics()
-        const startAngle = Phaser.Math.DegToRad(-90)
-        const endAngle = startAngle + (Math.PI * 2 * remainingPercent)
+    createTimer(x, y, radius) {
+        if (!this.registry.has("timerStartedAt")) {
+            this.registry.set("timerStartedAt", this.game.loop.time)
+        }
 
-        timer.fillStyle(0xf5f1e6, 1)
-        timer.fillCircle(x, y, radius)
-        timer.fillStyle(0x3e8f5d, 1)
-        timer.slice(x, y, radius - 8, startAngle, endAngle, false)
-        timer.fillPath()
-        timer.lineStyle(6, 0x2f2f2f, 0.8)
-        timer.strokeCircle(x, y, radius)
-
-        this.add.text(x, y, "Timer", {
+        this.timerDuration = 60000
+        this.timerStartedAt = this.registry.get("timerStartedAt")
+        this.timerX = x
+        this.timerY = y
+        this.timerRadius = radius
+        this.timerGraphics = this.add.graphics()
+        this.timerText = this.add.text(x, y, "60", {
             fontFamily: "Arial",
-            fontSize: "22px",
+            fontSize: "26px",
             color: "#242424",
             fontStyle: "bold"
         }).setOrigin(0.5)
+
+        this.updateTimer()
+    }
+
+    updateTimer() {
+        if (!this.timerGraphics) {
+            return
+        }
+
+        const elapsed = this.game.loop.time - this.timerStartedAt
+        const remaining = Phaser.Math.Clamp(this.timerDuration - elapsed, 0, this.timerDuration)
+        const remainingPercent = remaining / this.timerDuration
+        const remainingSeconds = Math.ceil(remaining / 1000)
+        const startAngle = Phaser.Math.DegToRad(-90)
+        const endAngle = startAngle + (Math.PI * 2 * remainingPercent)
+
+        this.timerGraphics.clear()
+        this.timerGraphics.fillStyle(0xf5f1e6, 1)
+        this.timerGraphics.fillCircle(this.timerX, this.timerY, this.timerRadius)
+
+        if (remainingPercent >= 1) {
+            this.timerGraphics.fillStyle(0x3e8f5d, 1)
+            this.timerGraphics.fillCircle(this.timerX, this.timerY, this.timerRadius - 8)
+        } else if (remainingPercent > 0) {
+            this.timerGraphics.fillStyle(0x3e8f5d, 1)
+            this.timerGraphics.slice(this.timerX, this.timerY, this.timerRadius - 8, startAngle, endAngle, false)
+            this.timerGraphics.fillPath()
+        }
+
+        this.timerGraphics.lineStyle(6, 0x2f2f2f, 0.8)
+        this.timerGraphics.strokeCircle(this.timerX, this.timerY, this.timerRadius)
+        this.timerText.setText(remainingSeconds.toString())
     }
 
     createDisplayPlaceholder(x, y) {
