@@ -1,47 +1,4 @@
 class UIFrame extends Phaser.Scene {
-<<<<<<< Updated upstream
-    constructor(sceneKey, aisleIndex) {
-        super(sceneKey)
-        this.aisleIndex = aisleIndex
-    }
-
-    create() {
-        const { width, height } = this.scale
-        this.currentAisle = this.aisleIndex
-        this.aisleColors = [0xd9d4c6, 0xcfe3d1, 0xd7d2ea]
-        this.aisleScenes = ["aisleOneScene", "aisleTwoScene", "aisleThreeScene"]
-
-        this.background = this.add.rectangle(width / 2, height / 2, width, height, this.aisleColors[this.currentAisle])
-        this.add.rectangle(width / 2, height / 2, width - 48, height - 40, 0xf0ead9, 0.18)
-            .setStrokeStyle(4, 0x3d3d3d, 0.45)
-
-        this.cameras.main.setBackgroundColor(this.aisleColors[this.currentAisle])
-
-        this.createStickyNote(115, 35, 190, 150, "Buy", 0xffef8a)
-        this.createStickyNote(width - 305, 35, 190, 150, "Budget", 0xaee6ff)
-        this.createTimer(width / 2, 72, 62, 0.72)
-        this.createDisplayPlaceholder(width / 2, height / 2 + 7)
-        this.createAisleArrows(width, height)
-        this.createCartPlaceholder(width / 2, height - 85)
-    }
-
-    changeAisle(direction) {
-        const nextAisle = Phaser.Math.Wrap(this.currentAisle + direction, 0, this.aisleScenes.length)
-
-        this.scene.start(this.aisleScenes[nextAisle])
-    }
-
-    createStickyNote(x, y, noteWidth, noteHeight, title, color) {
-        const note = this.add.graphics()
-
-        note.fillStyle(color, 1)
-        note.fillRoundedRect(x, y, noteWidth, noteHeight, 8)
-        note.lineStyle(4, 0x3a3024, 0.75)
-        note.strokeRoundedRect(x, y, noteWidth, noteHeight, 8)
-        note.lineBetween(x, y + 44, x + noteWidth, y + 44)
-
-        this.add.text(x + 18, y + 10, title, {
-=======
     constructor() {
         super("uiScene")
     }
@@ -58,7 +15,6 @@ class UIFrame extends Phaser.Scene {
         this.ui.cart = this.createCartPlaceholder(width / 2, height - 85);
         this.ui.leftArrow = this.createArrowButton(75, height / 2 + 32, -1);
         this.ui.rightArrow = this.createArrowButton(width - 75, height / 2 + 32, 1);
-    
     }
 
     // UI modes based on room
@@ -136,7 +92,6 @@ class UIFrame extends Phaser.Scene {
         note.lineBetween(x, y + 44, x + w, y + 44);
 
         const text = this.add.text(x + 18, y + 10, title, {
->>>>>>> Stashed changes
             fontFamily: "Arial",
             fontSize: "28px",
             color: "#2e2a24",
@@ -196,26 +151,8 @@ class UIFrame extends Phaser.Scene {
             color: "#6f675b",
             fontStyle: "bold"
         }).setOrigin(0.5);
-
-<<<<<<< Updated upstream
-class AisleOne extends UIFrame {
-    constructor() {
-        super("aisleOneScene", 0)
-    }
-}
-
-class AisleTwo extends UIFrame {
-    constructor() {
-        super("aisleTwoScene", 1)
-    }
-}
-
-class AisleThree extends UIFrame {
-    constructor() {
-        super("aisleThreeScene", 2)
-=======
         container.add([cart, text]);
+
         return container;
->>>>>>> Stashed changes
     }
 }

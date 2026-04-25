@@ -12,11 +12,7 @@ const config = {
             debug: false
         }
     },
-<<<<<<< Updated upstream
-    scene: [ Load, AisleOne, AisleTwo, AisleThree ]
-=======
     scene: [ Load,  UIFrame, AisleScene, AisleOne, AisleTwo, AisleThree, AisleFour, AisleFive, Checkout, Shelf ]
->>>>>>> Stashed changes
 }
 
 const game = new Phaser.Game(config)
