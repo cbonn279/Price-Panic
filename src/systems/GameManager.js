@@ -2,7 +2,8 @@ class GameManager {
 
     // core stats
     static budget = 150;
-    static timeRemaining = 240;
+    static timerDuration = 60000; 
+    static timerStartedAt = null;
 
     // game progressions/transitions
     static inventory = [];
@@ -36,10 +37,25 @@ class GameManager {
         return this.inventory.reduce((sum, item) => sum + item.quality, 0);
     }
 
+    // start timer on play
+    static startTimer(currentTime) {
+        if (!this.timerStartedAt) {
+            this.timerStartedAt = currentTime;
+        }
+    }
+
+    // keep track of time
+    static getRemainingTime(currentTime) {
+        if (!this.timerStartedAt) return this.timerDuration;
+
+        const elapsed = currentTime - this.timerStartedAt;
+        return Phaser.Math.Clamp(this.timerDuration - elapsed, 0, this.timerDuration);
+    }
+
     // reset game stats/states for restarts
     static reset() {
         this.budget = 150;
-        this.timeRemaining = 240;
+        this.timerStartedAt = null;
         this.inventory = [];
 
         this.flags = {

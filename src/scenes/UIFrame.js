@@ -11,10 +11,17 @@ class UIFrame extends Phaser.Scene {
         this.ui = {};
         this.ui.buy = this.createStickyNote(115, 35, 190, 150, "Buy", 0xffef8a);
         this.ui.budget = this.createStickyNote(width - 305, 35, 190, 150, "Budget", 0xaee6ff);
-        this.ui.timer = this.createTimer(width / 2, 72, 62, 0.72);
+        this.ui.timer = new Timer(this, width / 2, 72, 62);
         this.ui.cart = this.createCartPlaceholder(width / 2, height - 85);
         this.ui.leftArrow = this.createArrowButton(75, height / 2 + 32, -1);
         this.ui.rightArrow = this.createArrowButton(width - 75, height / 2 + 32, 1);
+    }
+
+    // update timer
+    update() {
+        if (this.ui.timer) {
+            this.ui.timer.update();
+        }
     }
 
     // UI modes based on room
@@ -99,34 +106,6 @@ class UIFrame extends Phaser.Scene {
         });
 
         container.add([note, text]);
-        return container;
-    }
-
-    createTimer(x, y, radius, percent) {
-        const container = this.add.container();
-
-        const timer = this.add.graphics();
-        const startAngle = Phaser.Math.DegToRad(-90);
-        const endAngle = startAngle + (Math.PI * 2 * percent);
-
-        timer.fillStyle(0xf5f1e6, 1);
-        timer.fillCircle(x, y, radius);
-
-        timer.fillStyle(0x3e8f5d, 1);
-        timer.slice(x, y, radius - 8, startAngle, endAngle, false);
-        timer.fillPath();
-
-        timer.lineStyle(6, 0x2f2f2f, 0.8);
-        timer.strokeCircle(x, y, radius);
-
-        const text = this.add.text(x, y, "Timer", {
-            fontFamily: "Arial",
-            fontSize: "22px",
-            color: "#242424",
-            fontStyle: "bold"
-        }).setOrigin(0.5);
-
-        container.add([timer, text]);
         return container;
     }
 
