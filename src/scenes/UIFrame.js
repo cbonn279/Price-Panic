@@ -10,7 +10,7 @@ class UIFrame extends Phaser.Scene {
         // UI elements defined
         this.ui = {};
         this.ui.buy = this.createBuyStickyNote(115, 35, 190, 150);
-        this.ui.budget = this.createStickyNote(width - 305, 35, 190, 150, "Budget", 0xaee6ff);
+        this.ui.budget = this.createBudgetStickyNote(width - 305, 35, 190, 150);
         this.ui.timer = new Timer(this, width / 2, 72, 62);
         this.ui.cart = this.createCartPlaceholder(width / 2, height - 85);
         this.ui.leftArrow = this.createArrowButton(75, height / 2 + 32, -1);
@@ -38,6 +38,10 @@ class UIFrame extends Phaser.Scene {
 
         if (this.ui.buy) {
             this.updateShoppingList();
+        }
+
+        if (this.ui.budget) {
+            this.updateBudget();
         }
     }
 
@@ -156,6 +160,27 @@ class UIFrame extends Phaser.Scene {
 
         this.updateShoppingList(container);
         return container;
+    }
+
+    createBudgetStickyNote(x, y, w, h) {
+        const container = this.createStickyNote(x, y, w, h, "Budget", 0xaee6ff);
+
+        container.budgetText = this.add.text(x + w / 2, y + 96, "", {
+            fontFamily: "Arial",
+            fontSize: "36px",
+            color: "#2e2a24",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
+
+        container.add(container.budgetText);
+        this.updateBudget(container);
+        return container;
+    }
+
+    updateBudget(container = this.ui.budget) {
+        if (!container || !container.budgetText) return;
+
+        container.budgetText.setText(`$${GameManager.budget}`);
     }
 
     updateShoppingList(container = this.ui.buy) {
