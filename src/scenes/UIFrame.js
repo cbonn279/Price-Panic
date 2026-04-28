@@ -7,6 +7,9 @@ class UIFrame extends Phaser.Scene {
         const { width, height } = this.scale;
         this.scene.bringToTop();
 
+        // fade overlay
+        this.fadeOverlay = this.add.rectangle(0, 0, width, height, 0x000000).setOrigin(0).setDepth(999999).setAlpha(0);
+
         // UI elements defined
         this.ui = {};
         this.ui.buy = this.createBuyStickyNote(115, 35, 190, 150);
@@ -30,19 +33,41 @@ class UIFrame extends Phaser.Scene {
         });
     }
 
-    // update timer
+    // fade out
+    fadeOut(duration = 1000, onComplete = null) {
+
+        // lock inputs
+        GameManager.lockInput();
+
+        // pause timer
+        GameManager.pauseTimer(this.game.loop.time);
+
+        // fade out tween
+        this.tweens.add({targets: this.fadeOverlay, alpha: 1, duration: duration, onComplete: () => {if (onComplete) onComplete();}});
+    }
+
+    // fade in
+    fadeIn(duration = 1000, onComplete = null) {
+
+        // fade in tween
+        this.tweens.add({targets: this.fadeOverlay, alpha: 0, duration: duration, onComplete: () => {
+
+                // unlock inputs
+                GameManager.unlockInput();
+
+                // resume timer
+                GameManager.resumeTimer(this.game.loop.time);
+                if (onComplete) onComplete();
+            }
+        });
+    }
+
+
+    // update timer, list, budget
     update() {
-        if (this.ui.timer) {
-            this.ui.timer.update();
-        }
-
-        if (this.ui.buy) {
-            this.updateShoppingList();
-        }
-
-        if (this.ui.budget) {
-            this.updateBudget();
-        }
+        if (this.ui.timer) this.ui.timer.update();
+        if (this.ui.buy) this.updateShoppingList();
+        if (this.ui.budget) this.updateBudget();
     }
 
     // UI modes based on room
@@ -94,6 +119,8 @@ class UIFrame extends Phaser.Scene {
         arrow.strokePath();
         arrow.setInteractive(hitArea, Phaser.Geom.Triangle.Contains);
         arrow.on("pointerdown", () => {
+            // lock inputs
+            if (GameManager.inputLocked) return;
             this.events.emit("changeAisle", direction);
         });
 

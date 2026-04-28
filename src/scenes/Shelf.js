@@ -61,7 +61,7 @@ class Shelf extends Phaser.Scene {
 
     // sends player to grab scene
     onItemGrabbed() {
-        this.scene.start("grab", { item: GameManager.selectedItem });
+        //this.scene.start("grab", { item: GameManager.selectedItem });
     }
 
     // sends player to check price scene
@@ -73,8 +73,11 @@ class Shelf extends Phaser.Scene {
 
     create() {
         // set ui mode
-        const ui = this.scene.get("uiScene");
-        ui.setMode("shelf");
+        this.ui = this.scene.get("uiScene");
+        this.ui.setMode("shelf");
+
+        // fade in
+        this.ui.fadeIn(1000);;
 
         // text styles for buttons and prices
         this.textConfig = {fontFamily: 'Arial', fontSize: '25px', color: '#FFFFFF', padding: { top: 25, bottom: 25, right: 25, left: 25 },};
@@ -107,6 +110,14 @@ class Shelf extends Phaser.Scene {
     createBackButton() {
         const back = this.add.circle(50, 50, 30, 0xff0000).setInteractive();
         this.add.text(50, 50, "←", {fontSize: "24px", color: "#ffffff"}).setOrigin(0.5);
-        back.on("pointerdown", () => {this.scene.start(GameManager.aisleScenes[GameManager.currentAisle]);});
+        back.on("pointerdown", () => {
+
+            // fade out
+            this.ui.fadeOut(1000, () => {
+
+            // go back to aisle
+            this.scene.start(GameManager.aisleScenes[this.aisle]);
+            });
+        });
     }
 }

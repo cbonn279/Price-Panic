@@ -12,10 +12,12 @@ class Timer {
     }
 
     update() {
-        // timer consts
+        // get current time
+        const currentTime = this.scene.game.loop.time;
+
+        // ask GameManager for remaining time
+        const remaining = GameManager.getRemainingTime(currentTime);
         const duration = GameManager.timerDuration;
-        const elapsed = this.scene.game.loop.time - GameManager.timerStartedAt;
-        const remaining = Phaser.Math.Clamp(duration - elapsed, 0, duration);
         const percent = remaining / duration;
         const seconds = Math.ceil(remaining / 1000);
         const startAngle = Phaser.Math.DegToRad(-90);
@@ -38,8 +40,10 @@ class Timer {
         this.graphics.lineStyle(6, 0x2f2f2f, 0.8);
         this.graphics.strokeCircle(this.x, this.y, this.radius);
 
-        // time tezt
+        // text
         this.text.setText(seconds.toString());
+
+        // timeout flag
         if (remaining <= 0 && !GameManager.flags.timeUp) {
             GameManager.flags.timeUp = true;
         }

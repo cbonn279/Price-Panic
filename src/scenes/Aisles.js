@@ -18,17 +18,20 @@ class AisleScene extends Phaser.Scene {
         this.add.text(width / 2, height / 3, `ROOM ${this.aisleIndex + 1}`, {fontSize: "48px",color: "#ffffff"}).setOrigin(0.5);
 
         // use arrows to room transition
-        const ui = this.scene.get("uiScene");
+        this.ui = this.scene.get("uiScene");
 
         // UI mode
-        ui.setMode("aisle");
+        this.ui.setMode("aisle");
+        
+        // fade in
+        this.ui.fadeIn(1000);
 
         // listen
-        ui.events.on("changeAisle", this.changeAisle, this);
+        this.ui.events.on("changeAisle", this.changeAisle, this);
 
         // clean up after scene
         this.events.once("shutdown", () => {
-            ui.events.off("changeAisle", this.changeAisle, this);
+            this.ui.events.off("changeAisle", this.changeAisle, this);
         });
 
         // enter shelf scene if clicking general middle of the room
@@ -38,15 +41,19 @@ class AisleScene extends Phaser.Scene {
 
             // determine center of room
             if (Math.abs(pointer.x - cx) < 200 && Math.abs(pointer.y - cy) < 120) {
-                this.scene.start("shelf", { aisle: this.aisleIndex });
+
+                // fade out
+                this.ui.fadeOut(1000, () => {this.scene.start("shelf", { aisle: this.aisleIndex });});
             }
         });
     }
 
-    // use GameManager to change aisle fwith arrows
+    // use GameManager to change aisle with arrows
     changeAisle(direction) {
         GameManager.currentAisle = Phaser.Math.Wrap(GameManager.currentAisle + direction, 0, GameManager.aisleScenes.length);
-        this.scene.start(GameManager.aisleScenes[GameManager.currentAisle]);
+
+        // fade out
+        this.ui.fadeOut(1000, () => {this.scene.start(GameManager.aisleScenes[GameManager.currentAisle]);});
     }
 }
 

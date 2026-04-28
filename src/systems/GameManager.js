@@ -2,8 +2,12 @@ class GameManager {
 
     // core stats
     static budget = 150;
-    static timerDuration = 60000; 
-    static timerStartedAt = null;
+    static timerDuration = 400000; 
+    static timerStart = null;
+    static paused = false;
+    static pausedTime = 0;
+    static pauseStart = null;
+    static inputLocked = false;
 
     // game progressions/transitions
     static inventory = [];
@@ -39,17 +43,53 @@ class GameManager {
 
     // start timer on play
     static startTimer(currentTime) {
-        if (!this.timerStartedAt) {
-            this.timerStartedAt = currentTime;
+        if (this.timerStart === null) {
+            this.timerStart = currentTime;
+            this.pausedTime = 0;
+            this.paused = false;
+            this.pauseStart = null;
         }
     }
 
     // keep track of time
     static getRemainingTime(currentTime) {
-        if (!this.timerStartedAt) return this.timerDuration;
+        if (this.timerStart === null) return this.timerDuration;
+        let pausedExtra = this.pausedTime;
 
-        const elapsed = currentTime - this.timerStartedAt;
+        // if currently paused, include current pause duration
+        if (this.paused && this.pauseStart !== null) {
+            pausedExtra += currentTime - this.pauseStart;
+        }
+
+        // visually keep up
+        const elapsed = currentTime - this.timerStart - pausedExtra;
         return Phaser.Math.Clamp(this.timerDuration - elapsed, 0, this.timerDuration);
+    }
+
+    // pause timer
+        static pauseTimer(currentTime) {
+        if (!this.paused) {
+            this.paused = true;
+            this.pauseStart = currentTime;
+        }
+    }
+
+    // resume timer
+    static resumeTimer(currentTime) {
+        if (this.paused) {
+            this.paused = false;
+            this.pausedTime += currentTime - this.pauseStart;
+            this.pauseStart = null;
+        }
+    }
+
+    // lock and unlock input
+    static lockInput() {
+        this.inputLocked = true;
+    }
+
+    static unlockInput() {
+        this.inputLocked = false;
     }
 
     // reset game stats/states for restarts
