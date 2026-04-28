@@ -5,6 +5,9 @@ class Load extends Phaser.Scene {
 
     preload() {
         this.load.path = './assets/'
+
+        // font
+        this.load.font('text', 'Leander.ttf', 'truetype')
         
     }
 

@@ -14,7 +14,7 @@ class TextNotif {
         this.fullText = "";
 
         // create text object
-        this.label = scene.add.text(this.x, this.y, "", {fontFamily: "Arial", fontSize: this.fontSize, color: this.color, align: "center"}).setOrigin(0.5);
+        this.label = scene.add.text(this.x, this.y, "", {fontFamily: "text", fontSize: this.fontSize, color: this.color, align: "center"}).setOrigin(0.5);
         this.start();
     }
 
