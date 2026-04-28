@@ -15,31 +15,33 @@ class Shelf extends Phaser.Scene {
     }
 
     // reusable function for all clickable text UI
-    makeTextbox(x, y, text, funcClick, funcHover = () => {}, funcOut = () => {}) {
+    makeTextbox(x, y, text, funcClick, funcHover = () => {}, funcOut = () => {}, item = null) {
         let button = this.add.text(x, y, text, this.textConfig).setStyle({ backgroundColor: '#111' }).setInteractive({ useHandCursor: true })
 
             // behavior for click, hover, and unhover
-            .on('pointerdown', () => {funcClick(button);})
-            .on('pointerover', () => {button.setStyle({ backgroundColor: '#706e6a' });funcHover(button);})
-            .on('pointerout', () => {button.setStyle({ backgroundColor: '#111' });funcOut(button);});
+            .on('pointerdown', () => {funcClick(button, item);})
+            .on('pointerover', () => {button.setStyle({ backgroundColor: '#706e6a' });funcHover(button, item);})
+            .on('pointerout', () => {button.setStyle({ backgroundColor: '#111' });funcOut(button, item);});
 
         return button;
     }
 
+    // interface functions
+
     // show unknown price when hovering item
-    onItemHover(button) {
+    onItemHover(button, item) {
         // don't show price if already clicked
         if (this.lastClicked === button) return;
         this.priceText = this.add.text(button.x + 12, button.y + 80, "$: ???", this.priceConfig);
     }
 
     // remove hover price text
-    onItemUnHover() {
+    onItemUnHover(button, item) {
         if (this.priceText) this.priceText.destroy();
     }
 
     // shows buttons for selected item
-    onItemClicked(button) {
+    onItemClicked(button, item) {
         this.lastClicked = button;
 
         // remove old buttons if they exist
@@ -67,6 +69,8 @@ class Shelf extends Phaser.Scene {
         this.scene.start("checkprice", { item: GameManager.selectedItem });
     }
 
+    // end interface functions
+
     create() {
         // set ui mode
         const ui = this.scene.get("uiScene");
@@ -93,7 +97,7 @@ class Shelf extends Phaser.Scene {
 
         // create item displays
         this.items.forEach((item, index) => {let x = 250 + index * 250; let y = 300;
-            this.makeTextbox(x, y, item.name, this.onItemClicked.bind(this), this.onItemHover.bind(this), this.onItemUnHover.bind(this));});
+            this.makeTextbox(x, y, item.name, this.onItemClicked.bind(this), this.onItemHover.bind(this), this.onItemUnHover.bind(this), item);});
 
         // back button
         this.createBackButton();

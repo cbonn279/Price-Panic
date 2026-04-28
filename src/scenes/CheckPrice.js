@@ -6,6 +6,7 @@ class CheckPrice extends Phaser.Scene {
     // receive selected item
     init(data) {
         this.item = data.item;
+        console.log(this.item)
     }
 
     create() {
