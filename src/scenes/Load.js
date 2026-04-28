@@ -10,6 +10,6 @@ class Load extends Phaser.Scene {
 
     create() {
         this.scene.launch("uiScene");
-        this.scene.start("aisleOneScene");
+        this.scene.start("startScene");
     }
 }
