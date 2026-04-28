@@ -9,18 +9,39 @@ class UIFrame extends Phaser.Scene {
 
         // UI elements defined
         this.ui = {};
-        this.ui.buy = this.createStickyNote(115, 35, 190, 150, "Buy", 0xffef8a);
-        this.ui.budget = this.createStickyNote(width - 305, 35, 190, 150, "Budget", 0xaee6ff);
+        this.ui.buy = this.createBuyStickyNote(115, 35, 190, 150);
+        this.ui.budget = this.createBudgetStickyNote(width - 305, 35, 190, 150);
         this.ui.timer = new Timer(this, width / 2, 72, 62);
         this.ui.cart = this.createCartPlaceholder(width / 2, height - 85);
         this.ui.leftArrow = this.createArrowButton(75, height / 2 + 32, -1);
         this.ui.rightArrow = this.createArrowButton(width - 75, height / 2 + 32, 1);
+
+        // Each time you press C, it finds the next shopping-list item you don't have, 
+        // adds a temporary zero-price item to GameManager.inventory.
+        // and then refreshes the buy sticky note.
+        this.input.keyboard.on("keydown-C", () => {
+            const itemName = GameManager.shoppingList.find(item => !GameManager.hasItem(item));
+
+            if (itemName) {
+                GameManager.inventory.push({ name: itemName, price: 0, quality: 0 });
+            }
+
+            this.updateShoppingList();
+        });
     }
 
     // update timer
     update() {
         if (this.ui.timer) {
             this.ui.timer.update();
+        }
+
+        if (this.ui.buy) {
+            this.updateShoppingList();
+        }
+
+        if (this.ui.budget) {
+            this.updateBudget();
         }
     }
 
@@ -107,6 +128,81 @@ class UIFrame extends Phaser.Scene {
 
         container.add([note, text]);
         return container;
+    }
+
+    createBuyStickyNote(x, y, w, h) {
+        const container = this.createStickyNote(x, y, w, h, "Buy", 0xffef8a);
+        const items = GameManager.shoppingList || [];
+        const listX = x + 18;
+        const listTop = y + 56;
+        const listWidth = w - 36;
+        const rowHeight = Math.min(18, (h - 66) / Math.max(items.length, 1));
+
+        container.shoppingListItems = items.map((itemName, index) => {
+            const itemY = listTop + index * rowHeight;
+            const itemText = this.add.text(listX, itemY, itemName, {
+                fontFamily: "Arial",
+                fontSize: "15px",
+                color: "#2e2a24",
+                fixedWidth: listWidth
+            });
+
+            const strike = this.add.graphics();
+            container.add([itemText, strike]);
+
+            return {
+                name: itemName,
+                text: itemText,
+                strike,
+                strikeRight: x + w - 18
+            };
+        });
+
+        this.updateShoppingList(container);
+        return container;
+    }
+
+    createBudgetStickyNote(x, y, w, h) {
+        const container = this.createStickyNote(x, y, w, h, "Budget", 0xaee6ff);
+
+        container.budgetText = this.add.text(x + w / 2, y + 96, "", {
+            fontFamily: "Arial",
+            fontSize: "36px",
+            color: "#2e2a24",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
+
+        container.add(container.budgetText);
+        this.updateBudget(container);
+        return container;
+    }
+
+    updateBudget(container = this.ui.budget) {
+        if (!container || !container.budgetText) return;
+
+        container.budgetText.setText(`$${GameManager.budget}`);
+    }
+
+    updateShoppingList(container = this.ui.buy) {
+        if (!container || !container.shoppingListItems) return;
+
+        container.shoppingListItems.forEach((entry) => {
+            const hasItem = GameManager.hasItem(entry.name);
+
+            entry.text.setAlpha(hasItem ? 0.55 : 1);
+            entry.strike.clear();
+
+            if (hasItem) {
+                const bounds = entry.text.getBounds();
+                entry.strike.lineStyle(3, 0x2e2a24, 0.85);
+                entry.strike.lineBetween(
+                    bounds.left - 2,
+                    bounds.centerY,
+                    Math.min(bounds.right + 4, entry.strikeRight),
+                    bounds.centerY
+                );
+            }
+        });
     }
 
      createCartPlaceholder(x, y) {
