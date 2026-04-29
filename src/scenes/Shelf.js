@@ -14,13 +14,20 @@ class Shelf extends Phaser.Scene {
         this.priceText = null;
     }
 
+    // temp poo sound loading
+    preload() {
+		this.load.path = "./assets/sounds/";
+		this.load.audio("button_click", "button_happy_click.mp3");
+		this.load.audio("button_hover", "button_happy_hover.mp3");
+    }
+
     // reusable function for all clickable text UI
     makeTextbox(x, y, text, funcClick, funcHover = () => {}, funcOut = () => {}, item = null) {
         let button = this.add.text(x, y, text, this.textConfig).setStyle({ backgroundColor: '#111' }).setInteractive({ useHandCursor: true })
 
             // behavior for click, hover, and unhover
             .on('pointerdown', () => {funcClick(button, item);})
-            .on('pointerover', () => {button.setStyle({ backgroundColor: '#706e6a' });funcHover(button, item);})
+            .on('pointerover', () => {button.setStyle({ backgroundColor: '#706e6a' });this.sound.play("button_hover", this.buttonAudioConfig);funcHover(button, item);})
             .on('pointerout', () => {button.setStyle({ backgroundColor: '#111' });funcOut(button, item);});
 
         return button;
@@ -66,12 +73,17 @@ class Shelf extends Phaser.Scene {
 
     // sends player to check price scene
     onCheckPrice() {
+        this.sound.play("button_click", this.buttonAudioConfig);
         this.scene.start("checkprice", { item: GameManager.selectedItem });
     }
 
     // end interface functions
 
     create() {
+        this.buttonAudioConfig = {
+			volume: 1,
+			loop: false
+		}
         // set ui mode
         const ui = this.scene.get("uiScene");
         ui.setMode("shelf");
