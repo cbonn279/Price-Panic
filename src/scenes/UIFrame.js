@@ -20,7 +20,7 @@ class UIFrame extends Phaser.Scene {
         this.ui.rightArrow = this.createArrowButton(width - 75, height / 2 + 32, 1);
 
         // Each time you press C, it finds the next shopping-list item you don't have, 
-        // adds a temporary zero-price item to GameManager.inventory.
+        // adds a temporary item to inventory
         // and then refreshes the buy sticky note.
         this.input.keyboard.on("keydown-C", () => {
             const itemName = GameManager.shoppingList.find(item => !GameManager.hasItem(item));
@@ -88,6 +88,11 @@ class UIFrame extends Phaser.Scene {
         // UI for shelf
         if (mode === "shelf") {
             this.ui.budget.setVisible(true);
+            this.ui.timer.setVisible(true);
+        }
+
+        // UI timer only
+        if (mode === "time") {
             this.ui.timer.setVisible(true);
         }
 
@@ -207,7 +212,12 @@ class UIFrame extends Phaser.Scene {
     updateBudget(container = this.ui.budget) {
         if (!container || !container.budgetText) return;
 
-        container.budgetText.setText(`$${GameManager.budget}`);
+        // hide budget if player grabbed without checking price
+        if (GameManager.budgetHidden) {
+            container.budgetText.setText("$???");
+        } else {
+            container.budgetText.setText(`$${GameManager.budget}`);
+        }
     }
 
     updateShoppingList(container = this.ui.buy) {

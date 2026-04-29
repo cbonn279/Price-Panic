@@ -33,11 +33,19 @@ class AisleScene extends Phaser.Scene {
 
         // enter shelf scene if clicking general middle of the room
         this.input.on("pointerdown", (pointer) => {
+            if (GameManager.inputLocked) return;
             const cx = width / 2;
             const cy = height / 2;
 
             // determine center of room
             if (Math.abs(pointer.x - cx) < 200 && Math.abs(pointer.y - cy) < 120) {
+                const aisleState = GameManager.aisleData[this.aisleIndex];
+
+                // already got item from shelf notif
+                if (aisleState.used) {
+                    new TextNotif(this, {text: `I already got ${GameManager.shoppingList[this.aisleIndex]}...\nI have to hurry...`, holdTime: 2000});
+                    return;
+                }
 
                 // fade out
                 this.ui.fadeOut(1000, () => {this.scene.start("shelf", { aisle: this.aisleIndex });});

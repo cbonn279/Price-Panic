@@ -1,6 +1,7 @@
 class TextNotif {
     constructor(scene, config) {
         this.scene = scene;
+        if (GameManager.notifActive) return;
 
         // config defaults
         this.text = config.text || "";
@@ -44,6 +45,6 @@ class TextNotif {
 
     // destroy text object
     destroy() {
-        this.scene.tweens.add({targets: this.label, alpha: 0, duration: 500, onComplete: () => {this.label.destroy();}});
+        this.scene.tweens.add({targets: this.label, alpha: 0, duration: 500, onComplete: () => {this.label.destroy(); GameManager.notifActive = false;}});
     }
 }

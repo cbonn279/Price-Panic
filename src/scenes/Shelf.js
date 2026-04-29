@@ -26,31 +26,45 @@ class Shelf extends Phaser.Scene {
         return button;
     }
 
-    // interface functions
-
     // show unknown price when hovering item
-    onItemHover(button, item) {
-        // don't show price if already clicked
-        if (this.lastClicked === button) return;
-        this.priceText = this.add.text(button.x + 12, button.y + 80, "$: ???", this.priceConfig);
+    onItemUnHover(button, item) {
+        if (this.priceText) {
+            this.priceText.destroy();
+            this.priceText = null;
+        }
     }
 
-    // remove hover price text
-    onItemUnHover(button, item) {
+    // hover price text
+    onItemHover(button, item) {
+        if (this.lastClicked === button) return;
+
+        // keep track of state
+        const index = button.itemIndex;
+        const aisleState = GameManager.aisleData[this.aisle];
+
+        // destroy old hover text first 
         if (this.priceText) this.priceText.destroy();
+
+        // show ??? or price
+        if (aisleState.revealed[index]) {
+            this.priceText = this.add.text(button.x + 12, button.y + 80, `$${item.price}`, this.priceConfig);
+        } else {
+            this.priceText = this.add.text(button.x + 12, button.y + 80, "$???", this.priceConfig);
+        }
     }
 
     // shows buttons for selected item
     onItemClicked(button, item) {
         this.lastClicked = button;
+        this.selectedIndex = button.itemIndex;
 
         // remove old buttons if they exist
         if (this.grabButton) this.grabButton.destroy();
         if (this.checkPriceButton) this.checkPriceButton.destroy();
 
         // create Grab and Check Price buttons
-        this.grabButton = this.makeTextbox(button.x - 80, button.y + 80, "Grab", this.onItemGrabbed.bind(this));
-        this.checkPriceButton = this.makeTextbox(button.x + 80, button.y + 80, "Check Price", this.onCheckPrice.bind(this));
+        this.grabButton = this.makeTextbox(button.x - 80, button.y + 80, "Grab", () => this.onItemGrabbed(item, this.selectedIndex));
+        this.checkPriceButton = this.makeTextbox(button.x + 80, button.y + 80, "Check Price", () => this.onCheckPrice(item, this.selectedIndex));
 
         // remove hover text if present
         if (this.priceText) this.priceText.destroy();
@@ -59,17 +73,38 @@ class Shelf extends Phaser.Scene {
         GameManager.selectedItem = item;
     }
 
-    // sends player to grab scene
-    onItemGrabbed() {
-        //this.scene.start("grab", { item: GameManager.selectedItem });
-    }
-
     // sends player to check price scene
-    onCheckPrice() {
-        this.scene.start("checkprice", { item: GameManager.selectedItem });
+    onCheckPrice(item, index) {
+        this.scene.start("checkprice", {item: item, index: index, aisle: this.aisle});
     }
 
-    // end interface functions
+    // grab selected item
+    onItemGrabbed(item, index) {
+        if (GameManager.inputLocked) return;
+        GameManager.lockInput();
+
+        const aisleState = GameManager.aisleData[this.aisle];
+
+        // mark shelf as used
+        aisleState.used = true;
+
+        // if price is not revealed, ??? budget
+        if (!aisleState.revealed[index]) {
+            GameManager.budgetHidden = true;
+        }
+
+        // add item
+        GameManager.addItem(item);
+
+        // remove all item buttons visually
+        this.children.list.forEach(obj => {
+            if (obj.text && obj.text.includes(item.name)) {obj.destroy();}
+        });
+
+        // fade out back to aisle
+        this.ui.fadeOut(1000, () => {GameManager.unlockInput(); 
+        this.scene.start(GameManager.aisleScenes[this.aisle]);});
+    }
 
     create() {
         // set ui mode
@@ -80,10 +115,10 @@ class Shelf extends Phaser.Scene {
         this.ui.fadeIn(1000);;
 
         // text styles for buttons and prices
-        this.textConfig = {fontFamily: 'Arial', fontSize: '25px', color: '#FFFFFF', padding: { top: 25, bottom: 25, right: 25, left: 25 },};
-        this.priceConfig = {fontFamily: 'Arial', fontSize: '20px', color: '#FFFFFF', italic: true, padding: { top: 5, bottom: 5 },};
+        this.textConfig = {fontFamily: 'text', fontSize: '25px', color: '#FFFFFF', padding: { top: 25, bottom: 25, right: 25, left: 25 },};
+        this.priceConfig = {fontFamily: 'text', fontSize: '20px', color: '#FFFFFF', italic: true, padding: { top: 5, bottom: 5 },};
 
-        // Checkout 
+        // Checkout (for now)
         if (this.aisle === 5) {
             this.add.rectangle(512, 300, 1024, 600, 0x000000);
             this.add.text(512, 300, "CHECKOUT", {fontSize: "48px", color: "#ffffff"}).setOrigin(0.5);
@@ -94,14 +129,23 @@ class Shelf extends Phaser.Scene {
         // load items for current aisle
         const key = `aisle${this.aisle + 1}`;
         this.items = ITEMS[key];
+        const aisleState = GameManager.aisleData[this.aisle];
 
         // background for shelf
         const { width, height } = this.scale;
         this.add.image(width / 2, height / 2, "shelf").setDisplaySize(width, height).setDepth(-1);
 
-        // create item displays
-        this.items.forEach((item, index) => {let x = 250 + index * 250; let y = 300;
-            this.makeTextbox(x, y, item.name, this.onItemClicked.bind(this), this.onItemHover.bind(this), this.onItemUnHover.bind(this), item);});
+        // display revealed prices
+        this.items.forEach((item, index) => {
+            let x = 250 + index * 250;
+            let y = 300;
+
+            // button displayed
+            const button = this.makeTextbox(x, y, item.name, this.onItemClicked.bind(this), this.onItemHover.bind(this), this.onItemUnHover.bind(this), item);
+
+            // attach index to button
+            button.itemIndex = index; 
+        });
 
         // back button
         this.createBackButton();

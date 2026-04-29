@@ -3,10 +3,11 @@ class CheckPrice extends Phaser.Scene {
         super("checkprice");
     }
 
-    // receive selected item
+    // receive selected item, index, aisle
     init(data) {
         this.item = data.item;
-        console.log(this.item)
+        this.index = data.index;  
+        this.aisle = data.aisle;
     }
 
     create() {
@@ -15,12 +16,15 @@ class CheckPrice extends Phaser.Scene {
         this.add.text(512, 250, `Item: ${this.item.name}`, {fontSize: "32px", color: "#ffffff"}).setOrigin(0.5);
 
         // initial hidden price
-        this.priceText = this.add.text(512, 350, `Price: ???`, {fontSize: "32px", color: "#ffffff"}).setOrigin(0.5);
+         this.priceText = this.add.text(512, 350, `Price: ???`, {fontSize: "32px", color: "#ffffff"}).setOrigin(0.5);
 
-        // price reveal
-        this.time.delayedCall(2000, () => {this.priceText.setText(`Price: $${this.item.price.toFixed(2)}`);});
+        // reveal price
+        this.time.delayedCall(2000, () => {this.priceText.setText(`Price: $${this.item.price}`);
+
+        // mark this item as revealed
+        GameManager.aisleData[this.aisle].revealed[this.index] = true;});
 
         // return to shelf
-        this.time.delayedCall(5000, () => {this.scene.start("shelf", { aisle: GameManager.currentAisle });});
+        this.time.delayedCall(4000, () => {this.scene.start("shelf", { aisle: this.aisle });});
     }
 }

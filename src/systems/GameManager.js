@@ -8,6 +8,7 @@ class GameManager {
     static pausedTime = 0;
     static pauseStart = null;
     static inputLocked = false;
+    static notifActive = false;
 
     // game progressions/transitions
     static inventory = [];
@@ -17,6 +18,18 @@ class GameManager {
     // for after item is grabbed from a shelf already, marking the item as done 
     // (for shopping list and not letting player re-enter shelf)
     static shelvesUsed = {aisle1: false, aisle2: false, aisle3: false, aisle4: false, aisle5: false};
+
+    // track per aisle state
+    static aisleData = {
+        0: { used: false, checked: [false, false, false], revealed: [false, false, false] },
+        1: { used: false, checked: [false, false, false], revealed: [false, false, false] },
+        2: { used: false, checked: [false, false, false], revealed: [false, false, false] },
+        3: { used: false, checked: [false, false, false], revealed: [false, false, false] },
+        4: { used: false, checked: [false, false, false], revealed: [false, false, false] }
+    };
+
+    // if player ever grabs without checking price
+    static budgetHidden = false;
 
     // major state flags for possible endings
     static flags = {heartAttack: false, foodPoisoning: false, success: false, timeUp: false};
