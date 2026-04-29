@@ -10,12 +10,9 @@ class AisleScene extends Phaser.Scene {
         // keep track of global scene
         GameManager.currentAisle = this.aisleIndex;
 
-        // temporary room colors, just rainbow for now (we can add assets later)
-        this.aisleColors = [0xff0000, 0xff7f00, 0xFFCE1B, 0x00ff00, 0x0000ff, 0x8b00ff];
-
-        // temporary display colors and room labels
-        this.cameras.main.setBackgroundColor(this.aisleColors[this.aisleIndex]);
-        this.add.text(width / 2, height / 3, `ROOM ${this.aisleIndex + 1}`, {fontSize: "48px",color: "#ffffff"}).setOrigin(0.5);
+        // background image
+        const background = `A${this.aisleIndex + 1}`;
+        this.add.image(width / 2, height / 2, background).setDisplaySize(width, height).setDepth(-1);
 
         // use arrows to room transition
         this.ui = this.scene.get("uiScene");

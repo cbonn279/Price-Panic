@@ -3,7 +3,7 @@ const config = {
     type: Phaser.WEBGL,
     width: 1024,
     height: 600,
-    backgroundColor: '#626665',   
+    backgroundColor: '#000000',   
     pixelArt: true,
     physics: {
         default: "arcade",

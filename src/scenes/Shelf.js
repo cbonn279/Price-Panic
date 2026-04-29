@@ -96,7 +96,8 @@ class Shelf extends Phaser.Scene {
         this.items = ITEMS[key];
 
         // background for shelf
-        this.add.rectangle(512, 300, 1024, 600, 0x222222);
+        const { width, height } = this.scale;
+        this.add.image(width / 2, height / 2, "shelf").setDisplaySize(width, height).setDepth(-1);
 
         // create item displays
         this.items.forEach((item, index) => {let x = 250 + index * 250; let y = 300;
