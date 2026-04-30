@@ -2,6 +2,7 @@ class TextNotif {
     constructor(scene, config) {
         this.scene = scene;
         if (GameManager.notifActive) return;
+        GameManager.notifActive = true;
 
         // config defaults
         this.text = config.text || "";
@@ -21,16 +22,16 @@ class TextNotif {
 
     // begin text display
     start() {
-        this.scene.time.addEvent({delay: this.speed, loop: true, callback: () => this.type()});
+        this.typingEvent = this.scene.time.addEvent({delay: this.speed, loop: true, callback: () => this.type()});
     }
 
     // text display typing
     type() {
         if (this.index >= this.text.length) {
+            this.typingEvent.remove();
             this.finishTyping();
             return;
         }
-
         this.fullText += this.text[this.index];
         this.label.setText(this.fullText);
         this.index++;
@@ -45,6 +46,7 @@ class TextNotif {
 
     // destroy text object
     destroy() {
-        this.scene.tweens.add({targets: this.label, alpha: 0, duration: 500, onComplete: () => {this.label.destroy(); GameManager.notifActive = false;}});
+        if (!this.label) return;
+        this.scene.tweens.add({targets: this.label, alpha: 0, duration: 500, onComplete: () => {this.label.destroy(); this.label = null; GameManager.notifActive = false;}});
     }
 }

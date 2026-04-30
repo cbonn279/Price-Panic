@@ -12,7 +12,7 @@ class GameManager {
 
     // game progressions/transitions
     static inventory = [];
-    static shoppingList = ["milk", "veg", "meat", "fruit", "egg"];
+    static shoppingList = ["milk", "veg", "meat", "bread", "egg"];
     static aisleScenes = ["aisleOneScene", "aisleTwoScene", "aisleThreeScene", "aisleFourScene", "aisleFiveScene", "checkoutScene"];
 
     // for after item is grabbed from a shelf already, marking the item as done 

@@ -96,10 +96,14 @@ class Shelf extends Phaser.Scene {
         // add item
         GameManager.addItem(item);
 
-        // remove all item buttons visually
-        this.children.list.forEach(obj => {
-            if (obj.text && obj.text.includes(item.name)) {obj.destroy();}
-        });
+        // remove the clicked item button
+        if (this.lastClicked) {
+            this.lastClicked.destroy();
+        }
+
+        // remove action buttons
+        if (this.grabButton) this.grabButton.destroy();
+        if (this.checkPriceButton) this.checkPriceButton.destroy();
 
         // fade out back to aisle
         this.ui.fadeOut(1000, () => {GameManager.unlockInput(); 
