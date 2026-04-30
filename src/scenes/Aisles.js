@@ -43,7 +43,7 @@ class AisleScene extends Phaser.Scene {
 
                 // already got item from shelf notif
                 if (aisleState.used) {
-                    new TextNotif(this, {text: `I already got ${GameManager.shoppingList[this.aisleIndex]}...\nI have to hurry...`, holdTime: 2000});
+                    new TextNotif(this, {text: `I already got ${GameManager.shoppingList[this.aisleIndex]}...\nI have to hurry...`, holdTime: 2000, color: "#ffffff", background: true});
                     return;
                 }
 

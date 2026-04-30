@@ -26,6 +26,26 @@ class Shelf extends Phaser.Scene {
         return button;
     }
 
+    makeItemSprite(x, y, textureKey, funcClick, funcHover = () => {}, funcOut = () => {}, item = null) {
+        const sprite = this.add.image(x, y, textureKey).setInteractive({ useHandCursor: true }).setScale(item?.scale ?? this.itemScale);
+
+        sprite.on('pointerdown', () => {
+            funcClick(sprite, item);
+        });
+
+        sprite.on('pointerover', () => {
+            sprite.setTint(0xaaaaaa);
+            funcHover(sprite, item);
+        });
+
+        sprite.on('pointerout', () => {
+            sprite.clearTint();
+            funcOut(sprite, item);
+        });
+
+        return sprite;
+    }
+
     // show unknown price when hovering item
     onItemUnHover(button, item) {
         if (this.priceText) {
@@ -46,11 +66,7 @@ class Shelf extends Phaser.Scene {
         if (this.priceText) this.priceText.destroy();
 
         // show ??? or price
-        if (aisleState.revealed[index]) {
-            this.priceText = this.add.text(button.x + 12, button.y + 80, `$${item.price}`, this.priceConfig);
-        } else {
-            this.priceText = this.add.text(button.x + 12, button.y + 80, "$???", this.priceConfig);
-        }
+        this.priceText = this.add.text(button.x, button.y + 70, aisleState.revealed[index] ? `$${item.price}` : "$???", this.priceConfig).setOrigin(0.5);
     }
 
     // shows buttons for selected item
@@ -144,11 +160,12 @@ class Shelf extends Phaser.Scene {
             let x = 250 + index * 250;
             let y = 300;
 
-            // button displayed
-            const button = this.makeTextbox(x, y, item.name, this.onItemClicked.bind(this), this.onItemHover.bind(this), this.onItemUnHover.bind(this), item);
+            // display item sprite
+            const textureKey = `${item.name}${index + 1}`;
+            const sprite = this.makeItemSprite(x, y, textureKey, this.onItemClicked.bind(this), this.onItemHover.bind(this), this.onItemUnHover.bind(this), item);
 
-            // attach index to button
-            button.itemIndex = index; 
+            // attach index to sprite
+            sprite.itemIndex = index; 
         });
 
         // back button

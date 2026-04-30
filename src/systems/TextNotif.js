@@ -14,10 +14,21 @@ class TextNotif {
         this.holdTime = config.holdTime || 3000;
         this.index = 0;
         this.fullText = "";
+        this.background = config.background || false;
+
+        // optional background
+        if (this.background) { const { width, height } = scene.scale;
+        this.back = scene.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.8).setDepth(9998);
+        }
 
         // create text object
-        this.label = scene.add.text(this.x, this.y, "", {fontFamily: "text", fontSize: this.fontSize, color: this.color, align: "center"}).setOrigin(0.5);
+        this.label = scene.add.text(this.x, this.y, "", {fontFamily: "text", fontSize: this.fontSize, color: this.color, align: "center"}).setOrigin(0.5).setDepth(9999);
         this.start();
+
+        // clean up if scene shuts down
+        this.scene.events.once("shutdown", () => {
+            this.forceDestroy();
+        });
     }
 
     // begin text display
@@ -47,6 +58,46 @@ class TextNotif {
     // destroy text object
     destroy() {
         if (!this.label) return;
-        this.scene.tweens.add({targets: this.label, alpha: 0, duration: 500, onComplete: () => {this.label.destroy(); this.label = null; GameManager.notifActive = false;}});
+
+        // stop typing event just in case
+        if (this.typingEvent) {
+            this.typingEvent.remove();
+            this.typingEvent = null;
+        }
+
+        this.scene.tweens.add({targets: [this.label, this.back].filter(Boolean), alpha: 0, duration: 500,
+            onComplete: () => {
+                if (this.label) {
+                    this.label.destroy();
+                    this.label = null;
+                }
+                if (this.back) {
+                    this.back.destroy();
+                    this.back = null;
+                }
+                GameManager.notifActive = false;
+            }
+        });
+    }
+
+    forceDestroy() {
+        // stop typing event
+        if (this.typingEvent) {
+            this.typingEvent.remove();
+            this.typingEvent = null;
+        }
+
+        // destroy text immediately
+        if (this.label) {
+            this.label.destroy();
+            this.label = null;
+        }
+
+        // destroy background if it exists
+        if (this.back) {
+            this.back.destroy();
+            this.back = null;
+        }
+        GameManager.notifActive = false;
     }
 }
