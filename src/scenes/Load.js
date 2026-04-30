@@ -40,7 +40,6 @@ class Load extends Phaser.Scene {
         this.load.image('price', 'price.png')
         this.load.image('budget', 'budget.png')
         this.load.image('cart', 'cart.png')
-
     }
 
     create() {

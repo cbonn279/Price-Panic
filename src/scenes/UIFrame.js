@@ -10,6 +10,12 @@ class UIFrame extends Phaser.Scene {
         // fade overlay
         this.fadeOverlay = this.add.rectangle(0, 0, width, height, 0x000000).setOrigin(0).setDepth(999999).setAlpha(0);
 
+        this.uiOffsets = {
+            list: { x: -50, y: -10 },
+            budget: { x: 0, y: 0 },
+            cart: { x: 0, y: 150 }
+        };
+
         // UI elements defined
         this.ui = {};
         this.ui.buy = this.createBuyStickyNote(115, 35, 190, 150);
@@ -163,47 +169,36 @@ class UIFrame extends Phaser.Scene {
     }
 
     createBuyStickyNote(x, y, w, h) {
-        const container = this.createStickyNote(x, y, w, h, "Buy", 0xffef8a);
+        const container = this.add.container();
+
+        // background image
+        const listBg = this.add.image(x + (this.uiOffsets.list?.x || 0), y + (this.uiOffsets.list?.y || 0), "list").setOrigin(0).setDisplaySize(w, h);
+        container.add(listBg);
         const items = GameManager.shoppingList || [];
+
         const listX = x + 18;
-        const listTop = y + 56;
+        const listTop = y + 18;
         const listWidth = w - 36;
         const rowHeight = Math.min(18, (h - 66) / Math.max(items.length, 1));
 
         container.shoppingListItems = items.map((itemName, index) => {
             const itemY = listTop + index * rowHeight;
-            const itemText = this.add.text(listX, itemY, itemName, {
-                fontFamily: "Arial",
-                fontSize: "15px",
-                color: "#2e2a24",
-                fixedWidth: listWidth
-            });
 
+            const itemText = this.add.text(listX, itemY, itemName, {fontFamily: "text", fontSize: "15px", color: "#2e2a24", fixedWidth: listWidth});
             const strike = this.add.graphics();
             container.add([itemText, strike]);
 
-            return {
-                name: itemName,
-                text: itemText,
-                strike,
-                strikeRight: x + w - 18
-            };
-        });
+            return {name: itemName, text: itemText, strike, strikeRight: x + w - 18};});
 
         this.updateShoppingList(container);
         return container;
     }
 
     createBudgetStickyNote(x, y, w, h) {
-        const container = this.createStickyNote(x, y, w, h, "Budget", 0xaee6ff);
-
-        container.budgetText = this.add.text(x + w / 2, y + 96, "", {
-            fontFamily: "Arial",
-            fontSize: "36px",
-            color: "#2e2a24",
-            fontStyle: "bold"
-        }).setOrigin(0.5);
-
+        const container = this.add.container();
+        const bg = this.add.image( x + (this.uiOffsets.budget?.x || 0), y + (this.uiOffsets.budget?.y || 0), "budget").setOrigin(0).setDisplaySize(w, h);
+        container.add(bg);
+        container.budgetText = this.add.text(x + w / 2, y + 96, "", {fontFamily: "text", fontSize: "36px", color: "#2e2a24", fontStyle: "bold"}).setOrigin(0.5);
         container.add(container.budgetText);
         this.updateBudget(container);
         return container;
@@ -244,27 +239,8 @@ class UIFrame extends Phaser.Scene {
 
      createCartPlaceholder(x, y) {
         const container = this.add.container();
-
-        const cart = this.add.graphics();
-        const cartWidth = 470;
-        const cartHeight = 120;
-        const left = x - cartWidth / 2;
-        const top = y - cartHeight / 2;
-
-        cart.fillStyle(0xe6ddcb, 0.92);
-        cart.fillRoundedRect(left, top, cartWidth, cartHeight, 10);
-
-        cart.lineStyle(5, 0x2f2f2f, 0.75);
-        cart.strokeRoundedRect(left, top, cartWidth, cartHeight, 10);
-
-        const text = this.add.text(x, y, "Shopping cart asset area", {
-            fontFamily: "Arial",
-            fontSize: "28px",
-            color: "#6f675b",
-            fontStyle: "bold"
-        }).setOrigin(0.5);
-        container.add([cart, text]);
-
+        const bg = this.add.image(x + (this.uiOffsets.cart?.x || 0), y + (this.uiOffsets.cart?.y || 0), "cart").setOrigin(0.5);
+        container.add(bg);
         return container;
     }
 }
