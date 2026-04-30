@@ -10,6 +10,11 @@ class CheckPrice extends Phaser.Scene {
 
         this.grabbed = false;
         this.grabTime = 1000;
+        this.shakeIntensity = 1;
+        this.shakeRamping = 0.01;
+        this.shakeDir = 1;
+        this.shakeMovement = 1;
+        this.shakeMovementRamping = 0.01;
     }
 
     create() {
@@ -22,8 +27,14 @@ class CheckPrice extends Phaser.Scene {
         this.priceTag = this.add.rectangle(512,350, 400, 100, 0x00000).setInteractive({useHandCursor: true}).setOrigin(0.5)
         .on('pointerdown', () => {
             this.grabbed = true;
+            this.shakeIntensity - 1;
+            this.shakeMovement = 1
         }).on('pointerup', () => {
             this.grabbed = false;
+            this.priceTag.angle = 0;
+        }).on('pointerout', () => {
+            this.grabbed = false;
+            this.priceTag.angle = 0;
         });
 
         // price reveal
@@ -34,22 +45,24 @@ class CheckPrice extends Phaser.Scene {
     }
 
     update() {
-        let amount = 1;
+        this.shakeDir = 1
         if (this.grabbed) {
-            amount = -1;
-
+            this.shakeDir = -1
+            this.shakeIntensity += this.shakeRamping
             if (this.grabTime % 4 == 0) {
-                this.priceTag.angle = 5;
+                this.priceTag.angle = this.shakeIntensity;
             } else if (this.grabTime % 7 == 0) {
-                this.priceTag.angle = -5;
+                this.priceTag.angle = -this.shakeIntensity;
             }
             else {
                 this.priceTag.angle = 0;
             }
         }
         console.log(this.grabTime)
-        this.grabTime += amount
+        this.shakeMovement += this.shakeMovementRamping * this.shakeDir
+        this.grabTime = Math.floor(this.grabTime + this.shakeMovement)
         this.grabTime = Phaser.Math.Clamp(this.grabTime, 0, 1000);
+        this.shakeIntensity = Phaser.Math.Clamp(this.shakeIntensity, 0, 5)
         this.priceTag.x = Phaser.Math.Interpolation.SmoothStep(this.grabTime / 1000, 512/2, 512)
     }
 }
