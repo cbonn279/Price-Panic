@@ -155,18 +155,11 @@ class SoundManager {
         this.shouldPlaySpookyWind = true;
 
         this.play(scene, this.sounds.butcherWhoosh);
+        this.startSpookyWind(scene);
 
         if (this.spookyWindDelay) {
             this.spookyWindDelay.remove(false);
         }
-
-        this.spookyWindDelay = scene.time.delayedCall(450, () => {
-            this.spookyWindDelay = null;
-
-            if (this.shouldPlaySpookyWind) {
-                this.startSpookyWind(scene);
-            }
-        });
     }
 
     static startSpookyWind(scene) {

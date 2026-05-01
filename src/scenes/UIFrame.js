@@ -210,7 +210,7 @@ class UIFrame extends Phaser.Scene {
             const strike = this.add.graphics();
             container.add([itemText, strike]);
 
-            return {name: itemName, text: itemText, strike, strikeRight: x + w - 18};});
+            return {name: itemName, text: itemText, strike, strikeWidth: 58};});
 
         this.updateShoppingList(container);
         return container;
@@ -253,10 +253,11 @@ class UIFrame extends Phaser.Scene {
                 }
                 const bounds = entry.text.getBounds();
                 entry.strike.lineStyle(3, 0x2e2a24, 0.85);
+                const strikeEnd = bounds.left + entry.strikeWidth;
                 entry.strike.lineBetween(
                     bounds.left - 2,
                     bounds.centerY,
-                    Math.min(bounds.right + 4, entry.strikeRight),
+                    strikeEnd,
                     bounds.centerY
                 );
             }

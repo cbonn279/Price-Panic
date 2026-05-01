@@ -21,7 +21,7 @@ class Done extends Phaser.Scene {
         }
 
         // soup quality checker
-        const hasGoodQuality = totalQuality >= 20; // please change this 20 if you want the quality bar higher/lower
+        const hasGoodQuality = totalQuality >= 40; // please change this 20 if you want the quality bar higher/lower
         this.showCashierIntro(hasGoodQuality);
     }
 

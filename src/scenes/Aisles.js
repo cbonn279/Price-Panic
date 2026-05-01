@@ -77,7 +77,9 @@ class AisleScene extends Phaser.Scene {
             }
 
             this.ui.fadeOut(1000, () => {
+                SoundManager.playAisleFootsteps(this);
                 if (SoundManager.isButcherAisle(this.aisleIndex)) {
+                    SoundManager.stopHorrorAmbient(this);
                     SoundManager.startSpookyWindWithWhoosh(this);
                 }
                 this.scene.start("shelf", { aisle: this.aisleIndex });

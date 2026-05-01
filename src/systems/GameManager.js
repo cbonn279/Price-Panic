@@ -1,7 +1,7 @@
 class GameManager {
 
     // core stats
-    static budget = 5;
+    static budget = 35;
     static timerDuration = 60000;  
     static timerStart = null;
     static paused = false;
@@ -119,7 +119,7 @@ class GameManager {
 
     // reset game stats/states for restarts
     static reset() {
-        this.budget = 6;
+        this.budget = 35;
 
         this.timerStart = null;
         this.paused = false;

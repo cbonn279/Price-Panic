@@ -115,6 +115,9 @@ class Shelf extends Phaser.Scene {
 
         // play sound
         SoundManager.playItemPickup(this);
+        if (SoundManager.isButcherAisle(this.aisle)) {
+            SoundManager.stopSpookyWind(this);
+        }
 
         // remove the clicked item button
         if (this.lastClicked) {
@@ -142,6 +145,9 @@ class Shelf extends Phaser.Scene {
 
         // fade in
         this.ui.fadeIn(1000);;
+
+        // keep ambient music off in the butcher room
+        SoundManager.updateHorrorAmbientForShelf(this, this.aisle);
 
         // text styles for buttons and prices
         this.textConfig = {fontFamily: 'text', fontSize: '25px', color: '#FFFFFF', padding: { top: 25, bottom: 25, right: 25, left: 25 },};
