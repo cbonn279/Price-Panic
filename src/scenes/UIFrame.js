@@ -68,9 +68,22 @@ class UIFrame extends Phaser.Scene {
         });
     }
 
-
-    // update timer, list, budget
     update() {
+        const now = this.game.loop.time;
+
+        // start timer if needed
+        GameManager.startTimer(now);
+
+        // check time remaining
+        const remaining = GameManager.getRemainingTime(now);
+
+        // trigger heart attack if time run out
+        if (remaining <= 0 && !GameManager.flags.heartAttack) {
+            GameManager.flags.heartAttack = true;
+            new HeartAttack(this);
+        }
+
+        // existing UI updates
         if (this.ui.timer) this.ui.timer.update();
         if (this.ui.buy) this.updateShoppingList();
         if (this.ui.budget) this.updateBudget();
