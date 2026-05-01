@@ -264,9 +264,33 @@ class UIFrame extends Phaser.Scene {
     }
 
      createCartPlaceholder(x, y) {
-        const container = this.add.container();
-        const bg = this.add.image(x + (this.uiOffsets.cart?.x || 0), y + (this.uiOffsets.cart?.y || 0), "cart").setOrigin(0.5);
+        const container = this.add.container().setDepth(1000);
+        const bg = this.add.image(x + (this.uiOffsets.cart?.x || 0),y + (this.uiOffsets.cart?.y || 0),"cart").setOrigin(0.5)
         container.add(bg);
+
+        // store sprites
+        container.itemSprites = [];
+
         return container;
+    }
+
+    updateCartDisplay() {
+        const cart = this.ui.cart;
+        if (!cart) return;
+
+        const { offsetX, offsetY, spacing } = GameManager.cartDisplay;
+
+        // clear old sprites
+        cart.itemSprites.forEach(s => s.destroy());
+        cart.itemSprites = [];
+
+        GameManager.inventory.forEach((item, index) => {
+
+            // use stored sprite
+            const textureKey = item.textureKey;
+            const sprite = this.add.image(offsetX + index * spacing, offsetY, textureKey) .setScale(item.scale).setDepth(1000);
+            cart.add(sprite);
+            cart.itemSprites.push(sprite);
+        });
     }
 }

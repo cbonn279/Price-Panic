@@ -110,7 +110,8 @@ class Shelf extends Phaser.Scene {
         }
 
         // add item
-        GameManager.addItem(item);
+        GameManager.addItem({...item, textureKey: `${item.name}${index + 1}`, scale: item.scale});
+        this.scene.get("uiScene").updateCartDisplay();
 
         // play sound
         SoundManager.playItemPickup(this);

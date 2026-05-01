@@ -28,6 +28,13 @@ class GameManager {
         4: { used: false, checked: [false, false, false], revealed: [false, false, false] }
     };
 
+    // cart UI display
+    static cartDisplay = {
+        offsetX: 390,     
+        offsetY: 550,    
+        spacing: 90     
+    };
+
     // if player ever grabs without checking price
     static budgetHidden = false;
 
