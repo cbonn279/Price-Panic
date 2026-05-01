@@ -38,6 +38,11 @@ class GameManager {
     static currentAisle = 0;
     static selectedItem = null;
 
+    // checkout condition
+    static hasAllItems() {
+        return this.shoppingList.every(item => this.hasItem(item));
+    }
+
     // add items to inventory and minus cost from budget
     static addItem(item) {
         this.inventory.push(item);

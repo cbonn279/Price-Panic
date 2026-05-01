@@ -138,14 +138,6 @@ class Shelf extends Phaser.Scene {
         this.textConfig = {fontFamily: 'text', fontSize: '25px', color: '#FFFFFF', padding: { top: 25, bottom: 25, right: 25, left: 25 },};
         this.priceConfig = {fontFamily: 'text', fontSize: '20px', color: '#FFFFFF', italic: true, padding: { top: 5, bottom: 5 },};
 
-        // Checkout (for now)
-        if (this.aisle === 5) {
-            this.add.rectangle(512, 300, 1024, 600, 0x000000);
-            this.add.text(512, 300, "CHECKOUT", {fontSize: "48px", color: "#ffffff"}).setOrigin(0.5);
-            this.createBackButton();
-            return;
-        }
-
         // load items for current aisle
         const key = `aisle${this.aisle + 1}`;
         this.items = ITEMS[key];

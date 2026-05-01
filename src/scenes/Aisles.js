@@ -34,22 +34,48 @@ class AisleScene extends Phaser.Scene {
         // enter shelf scene if clicking general middle of the room
         this.input.on("pointerdown", (pointer) => {
             if (GameManager.inputLocked) return;
+
+            // center to click
             const cx = width / 2;
             const cy = height / 2;
+            const inCenter = Math.abs(pointer.x - cx) < 200 && Math.abs(pointer.y - cy) < 120;
 
-            // determine center of room
-            if (Math.abs(pointer.x - cx) < 200 && Math.abs(pointer.y - cy) < 120) {
-                const aisleState = GameManager.aisleData[this.aisleIndex];
+            if (!inCenter) return;
 
-                // already got item from shelf notif
-                if (aisleState.used) {
-                    new TextNotif(this, {text: `I already got ${GameManager.shoppingList[this.aisleIndex]}...\nI have to hurry...`, holdTime: 2000, color: "#ffffff", background: true});
+            // checkout aisle
+            if (this.aisleIndex === 5) {
+
+                // need all the items still
+                if (!GameManager.hasAllItems()) {
+
+                    if (!GameManager.notifActive) {
+                        new TextNotif(this, {text: "I am still missing ingredients...", holdTime: 2000, color: "#ffffff", background: true});
+                    }
                     return;
                 }
 
-                // fade out
-                this.ui.fadeOut(1000, () => {this.scene.start("shelf", { aisle: this.aisleIndex });});
+                // have all items start transition
+                this.ui.fadeOut(1000, () => {
+                    this.scene.start("doneScene");
+                });
+
+                return;
             }
+
+            // regular aisle behavior
+            const aisleState = GameManager.aisleData[this.aisleIndex];
+            
+            // already got item from shelf
+            if (aisleState.used) {
+                if (!GameManager.notifActive) {
+                    new TextNotif(this, {text: `I already got ${GameManager.shoppingList[this.aisleIndex]}...\nI have to hurry...`, holdTime: 2000, color: "#ffffff", background: true});
+                }
+                return;
+            }
+
+            this.ui.fadeOut(1000, () => {
+                this.scene.start("shelf", { aisle: this.aisleIndex });
+            });
         });
     }
 
