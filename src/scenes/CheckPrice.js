@@ -22,6 +22,10 @@ class CheckPrice extends Phaser.Scene {
     create() {
         const { width, height } = this.scale;
 
+        // set ui mode
+        this.ui = this.scene.get("uiScene");
+        this.ui.setMode("time");
+
         // backgrounds
         this.cameras.main.setBackgroundColor("#000");
 

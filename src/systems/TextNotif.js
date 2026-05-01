@@ -44,8 +44,15 @@ class TextNotif {
             this.finishTyping();
             return;
         }
-        this.fullText += this.text[this.index];
+        const char = this.text[this.index];
+        this.fullText += char;
         this.label.setText(this.fullText);
+
+        // play sound
+        if (char !== ".") {
+            SoundManager.playType(this.scene);
+        }
+
         this.index++;
     }
 

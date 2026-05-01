@@ -9,7 +9,8 @@ class SoundManager {
         spookyWind: "spookyWind",
         itemPickup: "itemPickup",
         clockTicking: "clockTicking",
-        heartBeat: "heartBeat"
+        heartBeat: "heartBeat",
+        type: "type"
     };
 
     static butcherAisle = 2;
@@ -46,6 +47,23 @@ class SoundManager {
 
     static playItemPickup(scene) {
         return this.play(scene, this.sounds.itemPickup);
+    }
+
+    static playType(scene) {
+        let sound = scene.sound.get(SoundManager.sounds.type);
+
+        if (!sound) {
+            sound = scene.sound.add(SoundManager.sounds.type, {
+                volume: 0.4  
+            });
+        }
+
+        // restart quickly instead of stacking sounds
+        if (sound.isPlaying) {
+            sound.stop();
+        }
+
+        sound.play();
     }
 
     // clock ticking
