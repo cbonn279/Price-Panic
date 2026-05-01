@@ -25,6 +25,9 @@ class UIFrame extends Phaser.Scene {
         this.ui.leftArrow = this.createArrowButton(75, height / 2 + 32, -1);
         this.ui.rightArrow = this.createArrowButton(width - 75, height / 2 + 32, 1);
 
+        // cart sound
+        SoundManager.playCartRolling(this);
+
         // Each time you press C, it finds the next shopping-list item you don't have, 
         // adds a temporary item to inventory
         // and then refreshes the buy sticky note.
@@ -87,6 +90,11 @@ class UIFrame extends Phaser.Scene {
         if (this.ui.timer) this.ui.timer.update();
         if (this.ui.buy) this.updateShoppingList();
         if (this.ui.budget) this.updateBudget();
+        if (remaining > 0 && remaining <= 60000 && !GameManager.paused) {
+            SoundManager.startClockTicking(this);
+        } else {
+            SoundManager.stopClockTicking(this);
+        }
     }
 
     // UI modes based on room
@@ -145,6 +153,7 @@ class UIFrame extends Phaser.Scene {
         arrow.on("pointerdown", () => {
             // lock inputs
             if (GameManager.inputLocked) return;
+            SoundManager.playCartRolling(this);
             this.events.emit("changeAisle", direction);
         });
 
@@ -238,6 +247,10 @@ class UIFrame extends Phaser.Scene {
             entry.strike.clear();
 
             if (hasItem) {
+                if (!entry.checkedOff) {
+                    SoundManager.playTodoCheck(this);
+                    entry.checkedOff = true;
+                }
                 const bounds = entry.text.getBounds();
                 entry.strike.lineStyle(3, 0x2e2a24, 0.85);
                 entry.strike.lineBetween(

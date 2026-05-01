@@ -23,6 +23,9 @@ class AisleScene extends Phaser.Scene {
         // fade in
         this.ui.fadeIn(1000);
 
+        // sound
+        SoundManager.updateHorrorAmbientForAisle(this);
+
         // listen
         this.ui.events.on("changeAisle", this.changeAisle, this);
 
@@ -74,6 +77,9 @@ class AisleScene extends Phaser.Scene {
             }
 
             this.ui.fadeOut(1000, () => {
+                if (SoundManager.isButcherAisle(this.aisleIndex)) {
+                    SoundManager.startSpookyWindWithWhoosh(this);
+                }
                 this.scene.start("shelf", { aisle: this.aisleIndex });
             });
         });
@@ -82,6 +88,13 @@ class AisleScene extends Phaser.Scene {
     // use GameManager to change aisle with arrows
     changeAisle(direction) {
         GameManager.currentAisle = Phaser.Math.Wrap(GameManager.currentAisle + direction, 0, GameManager.aisleScenes.length);
+
+        // play sound
+         if (SoundManager.isButcherAisle(this.aisleIndex)) {
+            SoundManager.stopSpookyWind(this);
+        }
+
+        SoundManager.updateHorrorAmbientForAisle(this);
 
         // fade out
         this.ui.fadeOut(1000, () => {this.scene.start(GameManager.aisleScenes[GameManager.currentAisle]);});

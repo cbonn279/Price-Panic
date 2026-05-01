@@ -112,6 +112,9 @@ class Shelf extends Phaser.Scene {
         // add item
         GameManager.addItem(item);
 
+        // play sound
+        SoundManager.playItemPickup(this);
+
         // remove the clicked item button
         if (this.lastClicked) {
             this.lastClicked.destroy();
@@ -123,6 +126,11 @@ class Shelf extends Phaser.Scene {
 
         // fade out back to aisle
         this.ui.fadeOut(1000, () => {GameManager.unlockInput(); 
+        
+        // play sound
+        SoundManager.playAisleFootsteps(this);
+        SoundManager.updateHorrorAmbientForAisle(this);
+
         this.scene.start(GameManager.aisleScenes[this.aisle]);});
     }
 
@@ -172,6 +180,10 @@ class Shelf extends Phaser.Scene {
 
             // fade out
             this.ui.fadeOut(1000, () => {
+
+            // play sound
+            SoundManager.playAisleFootsteps(this);
+            SoundManager.updateHorrorAmbientForAisle(this);
 
             // go back to aisle
             this.scene.start(GameManager.aisleScenes[this.aisle]);

@@ -7,6 +7,10 @@ class HeartAttack {
         // lock inputs
         GameManager.lockInput();
 
+        // go quiet
+        SoundManager.stopHorrorAmbient(scene);
+        SoundManager.stopClockTicking(scene);
+
         // create overlay container
         this.container = scene.add.container(0, 0).setDepth(10000);
 
