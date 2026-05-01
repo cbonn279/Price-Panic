@@ -20,6 +20,7 @@ class Timer {
         const duration = GameManager.timerDuration;
         const percent = remaining / duration;
         const seconds = Math.ceil(remaining / 1000);
+        const lastSixtySeconds = remaining > 0 && remaining <= 60000;
         const startAngle = Phaser.Math.DegToRad(-90);
         const endAngle = startAngle + (Math.PI * 2 * percent);
 
@@ -46,6 +47,12 @@ class Timer {
         // timeout flag
         if (remaining <= 0 && !GameManager.flags.timeUp) {
             GameManager.flags.timeUp = true;
+        }
+
+        if (lastSixtySeconds && !GameManager.paused) {
+            SoundManager.startClockTicking(this.scene);
+        } else {
+            SoundManager.stopClockTicking(this.scene);
         }
     }
 

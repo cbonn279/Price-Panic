@@ -98,6 +98,7 @@ class Shelf extends Phaser.Scene {
     onItemGrabbed(item, index) {
         if (GameManager.inputLocked) return;
         GameManager.lockInput();
+        SoundManager.playItemPickup(this);
 
         const aisleState = GameManager.aisleData[this.aisle];
 
@@ -122,6 +123,11 @@ class Shelf extends Phaser.Scene {
         if (this.checkPriceButton) this.checkPriceButton.destroy();
 
         // fade out back to aisle
+        SoundManager.playAisleFootsteps(this);
+        if (SoundManager.isButcherAisle(this.aisle)) {
+            SoundManager.stopSpookyWind(this);
+        }
+        SoundManager.updateHorrorAmbientForAisle(this);
         this.ui.fadeOut(1000, () => {GameManager.unlockInput(); 
         this.scene.start(GameManager.aisleScenes[this.aisle]);});
     }
@@ -130,6 +136,7 @@ class Shelf extends Phaser.Scene {
         // set ui mode
         this.ui = this.scene.get("uiScene");
         this.ui.setMode("shelf");
+        SoundManager.updateHorrorAmbientForShelf(this, this.aisle);
 
         // fade in
         this.ui.fadeIn(1000);;
@@ -179,6 +186,11 @@ class Shelf extends Phaser.Scene {
         back.on("pointerdown", () => {
 
             // fade out
+            SoundManager.playAisleFootsteps(this);
+            if (SoundManager.isButcherAisle(this.aisle)) {
+                SoundManager.stopSpookyWind(this);
+            }
+            SoundManager.updateHorrorAmbientForAisle(this);
             this.ui.fadeOut(1000, () => {
 
             // go back to aisle

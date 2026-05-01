@@ -126,6 +126,7 @@ class UIFrame extends Phaser.Scene {
         arrow.on("pointerdown", () => {
             // lock inputs
             if (GameManager.inputLocked) return;
+            SoundManager.playCartRolling(this);
             this.events.emit("changeAisle", direction);
         });
 
@@ -186,7 +187,11 @@ class UIFrame extends Phaser.Scene {
                 name: itemName,
                 text: itemText,
                 strike,
-                strikeRight: x + w - 18
+                strikeRight: x + w - 18,
+                checkedOff: GameManager.hasItem(itemName),
+                strikeProgress: GameManager.hasItem(itemName) ? 1 : 0,
+                strikeTween: null,
+                checkoffDelay: null
             };
         });
 
@@ -226,16 +231,63 @@ class UIFrame extends Phaser.Scene {
         container.shoppingListItems.forEach((entry) => {
             const hasItem = GameManager.hasItem(entry.name);
 
-            entry.text.setAlpha(hasItem ? 0.55 : 1);
+            if (hasItem && !entry.checkedOff && !GameManager.inputLocked && !entry.checkoffDelay) {
+                entry.checkoffDelay = this.time.delayedCall(350, () => {
+                    entry.checkoffDelay = null;
+
+                    if (!GameManager.hasItem(entry.name) || GameManager.inputLocked || entry.checkedOff) return;
+
+                    SoundManager.playTodoCheck(this);
+                    entry.checkedOff = true;
+                    entry.strikeProgress = 0;
+
+                    if (entry.strikeTween) entry.strikeTween.stop();
+                    entry.strikeTween = this.tweens.add({
+                        targets: entry,
+                        strikeProgress: 1,
+                        duration: 450,
+                        ease: "Cubic.easeOut",
+                        onComplete: () => {
+                            entry.strikeTween = null;
+                        }
+                    });
+                });
+            }
+
+            if (GameManager.inputLocked && entry.checkoffDelay) {
+                entry.checkoffDelay.remove(false);
+                entry.checkoffDelay = null;
+            }
+
+            if (!hasItem) {
+                entry.checkedOff = false;
+                entry.strikeProgress = 0;
+                if (entry.checkoffDelay) {
+                    entry.checkoffDelay.remove(false);
+                    entry.checkoffDelay = null;
+                }
+                if (entry.strikeTween) {
+                    entry.strikeTween.stop();
+                    entry.strikeTween = null;
+                }
+            }
+
+            entry.text.setAlpha(entry.checkedOff ? 0.55 : 1);
             entry.strike.clear();
 
-            if (hasItem) {
+            if (entry.checkedOff) {
                 const bounds = entry.text.getBounds();
+                const strikeEnd = Phaser.Math.Linear(
+                    bounds.left - 2,
+                    Math.min(bounds.right + 4, entry.strikeRight),
+                    entry.strikeProgress
+                );
+
                 entry.strike.lineStyle(3, 0x2e2a24, 0.85);
                 entry.strike.lineBetween(
                     bounds.left - 2,
                     bounds.centerY,
-                    Math.min(bounds.right + 4, entry.strikeRight),
+                    strikeEnd,
                     bounds.centerY
                 );
             }
