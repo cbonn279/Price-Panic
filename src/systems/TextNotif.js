@@ -15,6 +15,7 @@ class TextNotif {
         this.index = 0;
         this.fullText = "";
         this.background = config.background || false;
+        this.onComplete = config.onComplete || null;
 
         // optional background
         if (this.background) { const { width, height } = scene.scale;
@@ -52,6 +53,10 @@ class TextNotif {
     finishTyping() {
         this.scene.time.delayedCall(this.holdTime, () => {
             this.destroy();
+
+            if (this.onComplete) {
+                this.onComplete();
+            }
         });
     }
 

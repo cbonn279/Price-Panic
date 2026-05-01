@@ -34,6 +34,8 @@ class Load extends Phaser.Scene {
         this.load.image('egg1', 'egg1.png')
         this.load.image('egg2', 'egg2.png')
         this.load.image('egg3', 'egg3.png')
+        this.load.image('good', 'gsoup.png')
+        this.load.image('bad', 'bsoup.png')
 
         // ui
         this.load.image('list', 'list.png')

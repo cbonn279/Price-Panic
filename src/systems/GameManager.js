@@ -1,7 +1,7 @@
 class GameManager {
 
     // core stats
-    static budget = 150;
+    static budget = 5;
     static timerDuration = 60000;  
     static timerStart = null;
     static paused = false;
@@ -112,18 +112,17 @@ class GameManager {
 
     // reset game stats/states for restarts
     static reset() {
-        this.budget = 150;
+        this.budget = 6;
 
-        // stats reset
         this.timerStart = null;
         this.paused = false;
         this.pausedTime = 0;
         this.pauseStart = null;
         this.inputLocked = false;
         this.notifActive = false;
+
         this.inventory = [];
 
-        // reset aisle data completely
         this.aisleData = {
             0: { used: false, checked: [false, false, false], revealed: [false, false, false] },
             1: { used: false, checked: [false, false, false], revealed: [false, false, false] },
@@ -133,6 +132,7 @@ class GameManager {
         };
 
         this.budgetHidden = false;
+
         this.flags = {
             heartAttack: false,
             foodPoisoning: false,
