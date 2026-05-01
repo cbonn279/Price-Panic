@@ -8,7 +8,8 @@ class SoundManager {
         todoCheck: "todoCheck",
         spookyWind: "spookyWind",
         itemPickup: "itemPickup",
-        clockTicking: "clockTicking"
+        clockTicking: "clockTicking",
+        heartBeat: "heartBeat"
     };
 
     static butcherAisle = 2;
@@ -68,6 +69,32 @@ class SoundManager {
     static stopClockTicking(scene) {
         const ticking = scene.sound.get(this.sounds.clockTicking);
         if (ticking?.isPlaying) ticking.stop();
+    }
+
+    static playHeartBeat(scene) {
+        const key = this.sounds.heartBeat;
+
+        let sound = scene.sound.get(key);
+
+        if (!sound) {
+            sound = scene.sound.add(key, {
+                loop: true,
+                volume: 0.8 
+            });
+        }
+
+        sound.setSeek(sound.duration * 0.8);
+
+        if (!sound.isPlaying) {
+            sound.play();
+        }
+
+        return sound;
+    }
+
+    static stopHeartBeat(scene) {
+        const sound = scene.sound.get(this.sounds.heartBeat);
+        if (sound?.isPlaying) sound.stop();
     }
 
     // ambience

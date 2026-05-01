@@ -10,6 +10,7 @@ class HeartAttack {
         // go quiet
         SoundManager.stopHorrorAmbient(scene);
         SoundManager.stopClockTicking(scene);
+        SoundManager.playHeartBeat(scene);
 
         // create overlay container
         this.container = scene.add.container(0, 0).setDepth(10000);
@@ -62,6 +63,7 @@ class HeartAttack {
 
         button.on("pointerdown", () => {
             GameManager.reset();
+            SoundManager.stopHeartBeat(this.scene);
 
             // completely restart Phaser game instance
             this.scene.game.destroy(true);

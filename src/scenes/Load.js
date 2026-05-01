@@ -52,6 +52,7 @@ class Load extends Phaser.Scene {
         this.load.audio(SoundManager.sounds.spookyWind, 'Sounds/spooky wind.mp3');
         this.load.audio(SoundManager.sounds.itemPickup, 'Sounds/picking up item.mp3');
         this.load.audio(SoundManager.sounds.clockTicking, 'Sounds/clock ticking.mp3');
+        this.load.audio(SoundManager.sounds.heartBeat, 'Sounds/heart beating fast.mp3');
     }
 
     create() {
