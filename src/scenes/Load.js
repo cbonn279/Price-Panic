@@ -44,15 +44,15 @@ class Load extends Phaser.Scene {
         this.load.image('cart', 'cart.png')
         
         // sounds
-        this.load.audio(SoundManager.sounds.cartRolling, 'sounds/shopping cart rolling.mp3');
-        this.load.audio(SoundManager.sounds.aisleFootsteps, 'sounds/footsteps walking down aisle.mp3');
-        this.load.audio(SoundManager.sounds.horrorAmbient, 'sounds/horror ambient music.mp3');
-        this.load.audio(SoundManager.sounds.butcherWhoosh, 'sounds/entering butcher scene whoosh.mp3');
-        this.load.audio(SoundManager.sounds.todoCheck, 'sounds/checking item off todo list.mp3');
-        this.load.audio(SoundManager.sounds.spookyWind, 'sounds/spooky wind.mp3');
-        this.load.audio(SoundManager.sounds.itemPickup, 'sounds/picking up item.mp3');
-        this.load.audio(SoundManager.sounds.clockTicking, 'sounds/clock ticking.mp3');
-        this.load.audio(SoundManager.sounds.heartBeat, 'sounds/heart beating fast.mp3');
+        this.load.audio(SoundManager.sounds.cartRolling, 'sounds/cart.mp3');
+        this.load.audio(SoundManager.sounds.aisleFootsteps, 'sounds/footsteps.mp3');
+        this.load.audio(SoundManager.sounds.horrorAmbient, 'sounds/horror.mp3');
+        this.load.audio(SoundManager.sounds.butcherWhoosh, 'sounds/entering.mp3');
+        this.load.audio(SoundManager.sounds.todoCheck, 'sounds/checking.mp3');
+        this.load.audio(SoundManager.sounds.spookyWind, 'sounds/wind.mp3');
+        this.load.audio(SoundManager.sounds.itemPickup, 'sounds/picking.mp3');
+        this.load.audio(SoundManager.sounds.clockTicking, 'sounds/ticking.mp3');
+        this.load.audio(SoundManager.sounds.heartBeat, 'sounds/heart.mp3');
         this.load.audio(SoundManager.sounds.type, 'sounds/type.wav');
     }
 
